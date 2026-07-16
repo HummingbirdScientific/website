@@ -455,22 +455,36 @@ function initProductTabPrefetchOnHover() {
  * UI Form Optimizer: Injects text markup inside empty Webflow success/error elements
  */
 function initDynamicFormSubmissionMessages() {
-  // 1. Locate the native, locked success wrapper block
-  const successWrapper = document.querySelector('.w-form-done');
-  if (successWrapper) {
-    // Only inject if it is completely empty to prevent duplicates
-    if (successWrapper.children.length === 0 && successWrapper.textContent.trim() === "") {
-      successWrapper.innerHTML = `<div>Thank you! Your submission has been received!</div>`;
-    }
-  }
+    console.log("Form Message Opt: Initializing checks...");
 
-  // 2. Locate the native, locked error wrapper block
-  const errorWrapper = document.querySelector('.w-form-fail');
-  if (errorWrapper) {
-    // Only inject if it is completely empty to prevent duplicates
-    if (errorWrapper.children.length === 0 && errorWrapper.textContent.trim() === "") {
-      errorWrapper.innerHTML = `<div>Oops! Something went wrong while submitting the form.</div>`;
+    // 1. Locate the native, locked success wrapper block
+    const successWrapper = document.querySelector('.w-form-done');
+    if (successWrapper) {
+        console.log("Form Message Opt: Found '.w-form-done' element.");
+        // Only inject if it is completely empty to prevent duplicates
+        if (successWrapper.children.length === 0 && successWrapper.textContent.trim() === "") {
+            successWrapper.innerHTML = `<div>Thank you! Your submission has been received!</div>`;
+            console.log("Form Message Opt: Success text successfully injected into DOM.");
+        } else {
+            console.log("Form Message Opt: Skipped success injection (element already contains content).");
+        }
+    } else {
+        console.warn("Form Message Opt: Element '.w-form-done' not found on this page.");
     }
-  }
+
+    // 2. Locate the native, locked error wrapper block
+    const errorWrapper = document.querySelector('.w-form-fail');
+    if (errorWrapper) {
+        console.log("Form Message Opt: Found '.w-form-fail' element.");
+        // Only inject if it is completely empty to prevent duplicates
+        if (errorWrapper.children.length === 0 && errorWrapper.textContent.trim() === "") {
+            errorWrapper.innerHTML = `<div>Oops! Something went wrong while submitting the form.</div>`;
+            console.log("Form Message Opt: Error text successfully injected into DOM.");
+        } else {
+            console.log("Form Message Opt: Skipped error injection (element already contains content).");
+        }
+    } else {
+        console.warn("Form Message Opt: Element '.w-form-fail' not found on this page.");
+    }
 }
 

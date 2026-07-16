@@ -455,59 +455,31 @@ function initProductTabPrefetchOnHover() {
  * UI Form Optimizer: Safely populates empty success/error message nodes
  * for an explicit array list of targeted form wrapper IDs without applying inline style resets.
  */
+/**
+ * UI Form Optimizer: Populates empty success/error blocks adjacent to listed forms
+ */
 function initDynamicFormSubmissionMessages() {
-  // Define your list: Add your exact Webflow Form Block Element IDs here
   const targetFormIDs = [
-    '#wf-form-Custom-Solutions',
-    '#wf-form-Quote',
-    '#wf-form-Custom-Chips',
-    '#wf-form-Product-Quote',
-    '#wf-form-Service-Request-Form',
-    '#wf-form-Training-Form',
-    '#wf-form-Distributor-Application',
-    '#wf-form-Contact-Form',
+    '#wf-form-Custom-Solutions', '#wf-form-Quote', '#wf-form-Custom-Chips',
+    '#wf-form-Product-Quote', '#wf-form-Service-Request-Form',
+    '#wf-form-Training-Form', '#wf-form-Distributor-Application', '#wf-form-Contact-Form'
   ];
 
-  console.log("Form Message Opt: Initializing targeted injection for listed forms...");
-
   targetFormIDs.forEach(selector => {
-    try {
-      const formContainer = document.querySelector(selector);
-      if (!formContainer) return;
+    const form = document.querySelector(selector);
+    if (!form) return;
 
-      console.log(`Form Message Opt: Found listed form "${selector}". Processing text nodes...`);
+    // Step up to the parent block to target adjacent sibling message containers
+    const parent = form.parentNode;
+    const success = parent.querySelector('[aria-label*="success"]') || parent.querySelector('.w-form-done');
+    const error = parent.querySelector('[aria-label*="error"]') || parent.querySelector('.w-form-fail');
 
-      // 1. Target and process Success Message Block
-      const successWrapper = formContainer.querySelector('.w-form-done');
-      if (successWrapper) {
-        // Strip text spaces to check if it's visually blank
-        if (successWrapper.textContent.trim() === "") {
-          successWrapper.innerHTML = `<div>Thank you! Your submission has been received!</div>`;
-          console.log(`Form Message Opt: Success text successfully placed inside ${selector}`);
-        } else {
-          console.log(`Form Message Opt: Skipped success inside ${selector} (already has text).`);
-        }
-      } else {
-        console.warn(`Form Message Opt: Could not locate '.w-form-done' child inside ${selector}`);
-      }
-
-      // 2. Target and process Error Message Block
-      const errorWrapper = formContainer.querySelector('.w-form-fail');
-      if (errorWrapper) {
-        if (errorWrapper.textContent.trim() === "") {
-          errorWrapper.innerHTML = `<div>Oops! Something went wrong while submitting the form.</div>`;
-          console.log(`Form Message Opt: Error text successfully placed inside ${selector}`);
-        } else {
-          console.log(`Form Message Opt: Skipped error inside ${selector} (already has text).`);
-        }
-      } else {
-        console.warn(`Form Message Opt: Could not locate '.w-form-fail' child inside ${selector}`);
-      }
-
-    } catch (innerError) {
-      console.error(`Form Message Opt Error loop crash for element "${selector}":`, innerError);
+    if (success && success.textContent.trim() === "") {
+      success.innerHTML = `<div>Thank you! Your submission has been received!</div>`;
+    }
+    if (error && error.textContent.trim() === "") {
+      error.innerHTML = `<div>Oops! Something went wrong while submitting the form.</div>`;
     }
   });
-  console.log("Form Message Opt: Execution loop complete.");
 }
 

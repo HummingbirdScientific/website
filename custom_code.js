@@ -90,3 +90,98 @@ window.addEventListener('click', () => {
   });
 });
 }
+
+/**
+ * Navigation Search Engine Wrapper
+ * Fetches CMS search content dynamically on focus and syncs with Finsweet Attributes.
+ */
+function navSearchNavigationAnimation() {
+  // Scoped global state to track if the fetch has already occurred
+  let isProductsFetched = false;
+
+  console.log("Nav Search Debug: Embed listening for user focus.");
+
+  const searchInput = document.getElementById('nav-search-input'); 
+  const resultsContainer = document.getElementById('product-results-wrap');
+
+  if (!searchInput) console.error("Nav Search Error: Missing element '#nav-search-input'");
+  if (!resultsContainer) console.error("Nav Search Error: Missing element '#product-results-wrap'");
+
+  // Core execution engine
+  if (searchInput && resultsContainer) {
+    searchInput.addEventListener('focus', () => {
+      if (isProductsFetched) return;
+
+      console.log("Nav Search Debug: Fetching content from '/product-search-helper'...");
+      
+      const loader = document.createElement('div');
+      loader.id = 'nav-search-temporary-loader';
+      loader.innerText = 'Loading products...';
+      resultsContainer.appendChild(loader);
+
+      fetch('/product-search-helper')
+        .then(response => response.text())
+        .then(htmlString => {
+          console.log("Nav Search Debug: HTML components downloaded successfully.");
+          
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(htmlString, 'text/html');
+          const sourceContent = doc.getElementById('search-products-content');
+
+          const targetLoader = document.getElementById('nav-search-temporary-loader');
+          if (targetLoader) targetLoader.remove();
+          
+          if (sourceContent) {
+            isProductsFetched = true;
+          
+            console.log("Nav Search Debug: Moving #search-products-content");
+          
+            resultsContainer.style.visibility = "hidden";
+          
+            // Move the entire wrapper div, not just its children
+            resultsContainer.appendChild(sourceContent);
+          
+            console.log("Nav Search Debug: Layout successfully moved into #product-results-wrap!");
+          
+            // Re-sync with Finsweet's active indexing global registry
+            forceGlobalFinsweetSync(searchInput);
+          
+          } else {
+            console.warn("Nav Search Warning: #search-products-content not found.");
+          }
+        })
+        .catch(err => {
+          console.error('Fetch Error:', err);
+          const targetLoader = document.getElementById('nav-search-temporary-loader');
+          if (targetLoader) targetLoader.remove();
+        });
+    }, { once: true });
+  }
+}
+
+/**
+ * Commands Finsweet Components to map out the newly inserted DOM nodes.
+ */
+async function forceGlobalFinsweetSync(inputElement) {
+  try {
+    console.log("Nav Search Debug: Re-indexing Finsweet elements...");
+
+    // V2 restart
+    await window.FinsweetAttributes.modules.list.restart();
+    const resultsContainer = document.getElementById('product-results-wrap');
+    resultsContainer.style.visibility = "visible";
+
+    setTimeout(() => {
+      inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+      console.log("SUCCESS: Global Finsweet components match your embedded markup layout!");
+    }, 150);
+
+  } catch (err) {
+    console.warn("Standard fallback loop executed for sync event.", err);
+    inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+}
+
+
+
+

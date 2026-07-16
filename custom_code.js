@@ -183,5 +183,126 @@ async function forceGlobalFinsweetSync(inputElement) {
 }
 
 
+/**
+ * Programmable Google CSE Search Controller
+ */
+function initProgrammableSearchEngine() {
+  const searchInput = document.getElementById("nav-search-input");
+  const resultsWrapper = document.querySelector(".gcse-searchresults-only");
+  let searchTimer;
+
+  if (searchInput) {
+    // Hide results initially
+    if (resultsWrapper) {
+      resultsWrapper.style.display = "none";
+    }
+
+    searchInput.addEventListener("input", function(e) {
+      clearTimeout(searchTimer);
+
+      searchTimer = setTimeout(() => {
+        const query = e.target.value.trim();
+
+        if (window.google && window.google.search && window.google.search.cse) {
+          const googleElement = google.search.cse.element.getElement("live-engine");
+          if (!googleElement) return;
+
+          // Empty search
+          if (query === "") {
+            if (resultsWrapper) {
+              resultsWrapper.style.display = "none";
+            }
+            history.replaceState({}, "", window.location.pathname + window.location.search);
+            try {
+              googleElement.clearAllResults();
+            } catch (err) {
+              console.warn("Google clearAllResults failed:", err);
+            }
+            return;
+          }
+
+          // Non-empty search
+          if (resultsWrapper) {
+            resultsWrapper.style.display = "block";
+          }
+          googleElement.execute(query);
+        }
+      }, 150); // debounce delay
+    });
+  }
+
+  // Inject Custom Stylesheets Dynamically to Prevent Layout Flashing
+  injectProgrammableSearchStyles();
+  initBorderRadiusModifiers();
+}
+
+/**
+ * Injects the CSE Skin Custom Stylesheets dynamically onto the page DOM
+ */
+function injectProgrammableSearchStyles() {
+  if (document.getElementById("cse-custom-injected-styles")) return;
+
+  const styleSheet = document.createElement("style");
+  styleSheet.id = "cse-custom-injected-styles";
+  styleSheet.textContent = `
+    .select-3:focus {
+      border-bottom-left-radius: 0px !important;
+      border-bottom-right-radius: 0px !important;
+    }
+    .gsc-control-cse, .gsc-results-wrapper-nooverlay, .gsc-wrapper, .gsc-resultsbox-visible, .gsc-results {
+      width: 100% !important; max-width: 100% !important; box-sizing: border-box !important;
+      padding: 0px !important; margin: 0px !important; background-color: transparent !important; border: none !important;
+    }
+    .gsc-webResult-string, .gsc-inline-block-text, .gsc-footer-pageable, .gs-spelling, .gcse-searchresults-only + div {
+      display: none !important;
+    }
+    .gsc-cursor-box, .gsc-cursor, .gsc-cursor-page, .gsc-orderby-container, .order-by, .gsc-orderby-label,
+    .gs-bkmk, .gs-snippet, .gsc-url-top, .gsc-table-result, .gs-fileFormatType, .gsc-result-info, .gcsc-branding, .gsc-adBlock {
+      display: none !important;
+    }
+    .gsc-webResult.gsc-result {
+      width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; border: none !important;
+      background-color: transparent !important; margin: 4px 0px !important; padding: 10px 12px !important;
+      border-radius: 6px !important; transition: background-color 0.2s ease !important; overflow: hidden !important;
+    }
+    .gsc-webResult.gsc-result:hover {
+      background-color: #c21827b0 !important; 
+    }
+    .gsc-thumbnail-inside a.gs-title, .gsc-url-top a.gs-title, .gsc-thumbnail-inside a.gs-title b, .gsc-url-top a.gs-title b {
+      color: hsla(0, 0.00%, 19.78%, 0.80) !important; font-size: 15px !important; font-weight: 500 !important;
+      text-decoration: none !important; line-height: 1.4 !important; display: inline-block !important;
+      white-space: normal !important; word-break: break-word !important;
+    }
+    .gsc-webResult.gsc-result:hover a.gs-title, .gsc-webResult.gsc-result:hover a.gs-title b {
+      text-decoration: none !important;
+    }
+  `;
+  document.head.appendChild(styleSheet);
+}
+
+/**
+ * UI Modifier: Updates field border-radius properties on navigation action focus state
+ */
+function initBorderRadiusModifiers() {
+  const textField = document.querySelector(".text-field-3"); 
+  const selectDropdown = document.querySelector(".select-3");
+  const searchButton = document.querySelector("#main-menu-search-btn");
+  
+  if (textField && selectDropdown && searchButton) {
+    const originalRadius = window.getComputedStyle(searchButton).borderBottomRightRadius;		
+
+    textField.addEventListener("focus", function() {
+      searchButton.style.borderBottomRightRadius = "0px";
+      selectDropdown.style.borderBottomLeftRadius = "0px";
+    });
+
+    textField.addEventListener("blur", function() {
+      searchButton.style.borderBottomRightRadius = originalRadius;
+      selectDropdown.style.borderBottomLeftRadius = originalRadius;
+    });
+  }
+}
+
+
 
 

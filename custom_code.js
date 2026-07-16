@@ -471,32 +471,43 @@ function initDynamicFormSubmissionMessages() {
   console.log("Form Message Opt: Initializing targeted injection for listed forms...");
 
   targetFormIDs.forEach(selector => {
-    const formContainer = document.querySelector(selector);
-    
-    // Skip silently if this specific form doesn't exist on the current page
-    if (!formContainer) return;
+    try {
+      const formContainer = document.querySelector(selector);
+      if (!formContainer) return;
 
-    console.log(`Form Message Opt: Found listed form "${selector}". Processing text nodes...`);
+      console.log(`Form Message Opt: Found listed form "${selector}". Processing text nodes...`);
 
-    // 2. Populate success block wrapper if completely blank
-    const successWrapper = formContainer.querySelector('.w-form-done');
-    if (successWrapper) {
-      if (successWrapper.children.length === 0 && successWrapper.textContent.trim() === "") {
-        // Raw injection without inline styling attributes
-        successWrapper.innerHTML = `<div>Thank you! Your submission has been received!</div>`;
-        console.log(`Form Message Opt: Success text successfully placed inside ${selector}`);
+      // 1. Target and process Success Message Block
+      const successWrapper = formContainer.querySelector('.w-form-done');
+      if (successWrapper) {
+        // Strip text spaces to check if it's visually blank
+        if (successWrapper.textContent.trim() === "") {
+          successWrapper.innerHTML = `<div>Thank you! Your submission has been received!</div>`;
+          console.log(`Form Message Opt: Success text successfully placed inside ${selector}`);
+        } else {
+          console.log(`Form Message Opt: Skipped success inside ${selector} (already has text).`);
+        }
+      } else {
+        console.warn(`Form Message Opt: Could not locate '.w-form-done' child inside ${selector}`);
       }
-    }
 
-    // 3. Populate error block wrapper if completely blank
-    const errorWrapper = formContainer.querySelector('.w-form-fail');
-    if (errorWrapper) {
-      if (errorWrapper.children.length === 0 && errorWrapper.textContent.trim() === "") {
-        // Raw injection without inline styling attributes
-        errorWrapper.innerHTML = `<div>Oops! Something went wrong while submitting the form.</div>`;
-        console.log(`Form Message Opt: Error text successfully placed inside ${selector}`);
+      // 2. Target and process Error Message Block
+      const errorWrapper = formContainer.querySelector('.w-form-fail');
+      if (errorWrapper) {
+        if (errorWrapper.textContent.trim() === "") {
+          errorWrapper.innerHTML = `<div>Oops! Something went wrong while submitting the form.</div>`;
+          console.log(`Form Message Opt: Error text successfully placed inside ${selector}`);
+        } else {
+          console.log(`Form Message Opt: Skipped error inside ${selector} (already has text).`);
+        }
+      } else {
+        console.warn(`Form Message Opt: Could not locate '.w-form-fail' child inside ${selector}`);
       }
+
+    } catch (innerError) {
+      console.error(`Form Message Opt Error loop crash for element "${selector}":`, innerError);
     }
   });
+  console.log("Form Message Opt: Execution loop complete.");
 }
 

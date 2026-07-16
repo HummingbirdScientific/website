@@ -414,4 +414,40 @@ function initCountrySelectionDropdown() {
   });
 }
 
+/**
+ * Layout Optimizer: Prefetches and clones product tabs into the DOM on hover
+ */
+function initProductTabPrefetchOnHover() {
+  const btn = document.querySelector('#navigation-menu');
+  
+  // Guard clause: Exit if the button isn't present on the current page
+  if (!btn) return;
+
+  // Scoped private state variable
+  let loaded = false;
+
+  btn.addEventListener('mouseenter', async () => {
+    if (loaded) return;
+    loaded = true;
+
+    try {
+      const response = await fetch('/product-search-helper');
+      const htmlText = await response.text();
+      const doc = new DOMParser().parseFromString(htmlText, 'text/html');
+
+      ['tem', 'sem', 'xray'].forEach(type => {
+        const targetWrap = document.querySelector(`#nav-${type}-tab-wrap`);
+        const sourceContent = doc.querySelector(`#nav-${type}-tab-content`);
+        
+        if (targetWrap && sourceContent) {
+          targetWrap.appendChild(sourceContent.cloneNode(true));
+        }
+      });
+    } catch (err) {
+      console.error("Tab Prefetch Error:", err);
+      // Reset state if fetch fails so it can retry on next mouseenter
+      loaded = false; 
+    }
+  });
+}
 

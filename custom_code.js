@@ -451,3 +451,26 @@ function initProductTabPrefetchOnHover() {
   });
 }
 
+/**
+ * UI Form Optimizer: Injects text markup inside empty Webflow success/error elements
+ */
+function initDynamicFormSubmissionMessages() {
+  // 1. Locate the native, locked success wrapper block
+  const successWrapper = document.querySelector('.w-form-done');
+  if (successWrapper) {
+    // Only inject if it is completely empty to prevent duplicates
+    if (successWrapper.children.length === 0 && successWrapper.textContent.trim() === "") {
+      successWrapper.innerHTML = `<div>Thank you! Your submission has been received!</div>`;
+    }
+  }
+
+  // 2. Locate the native, locked error wrapper block
+  const errorWrapper = document.querySelector('.w-form-fail');
+  if (errorWrapper) {
+    // Only inject if it is completely empty to prevent duplicates
+    if (errorWrapper.children.length === 0 && errorWrapper.textContent.trim() === "") {
+      errorWrapper.innerHTML = `<div>Oops! Something went wrong while submitting the form.</div>`;
+    }
+  }
+}
+

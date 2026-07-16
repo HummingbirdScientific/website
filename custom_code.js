@@ -303,6 +303,58 @@ function initBorderRadiusModifiers() {
   }
 }
 
+/**
+ * UI Dynamic Placeholder: Injects helper text to reduce crawl pollution
+ */
+function initSearchTextPlaceholder() {
+  const container = document.getElementById('initial-search-result');
+  if (container) {
+    container.textContent = 'Start typing to see results..';
+  }
+}
+
+/**
+ * Form Submit Interceptor: Handles targeted catalog redirect logic
+ */
+function initNavSearchFormRedirect() {
+  const navSearchForm = document.querySelector('#wf-form-nav-search-products');
+  
+  // Safeguard: Stop execution if this specific form doesn't exist on the page
+  if (!navSearchForm) return;
+
+  navSearchForm.addEventListener('submit', function handleSubmit(e) {
+    e.preventDefault();
+
+    const searchInput = document.querySelector('#nav-search-input');
+    const selectEl = document.querySelector('#nav-search-select');
+
+    // Structural safeguard to avoid null errors
+    if (!searchInput || !selectEl) return;
+
+    const searchQuery = searchInput.value;
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+    if (!selectedOption) return;
+
+    // Extract the group identifier
+    const groupValue = selectedOption.dataset.group || 'environment+stimulus';
+
+    const searchSelect =
+      'products-filter_' +
+      groupValue +
+      '_equal=' +
+      encodeURIComponent(JSON.stringify([selectEl.value]));
+
+    const url =
+      '/product-catalog?' + "&" + searchSelect +
+      '&products-filter_*_equal=' +
+      encodeURIComponent(searchQuery);
+
+    console.log('Redirect URL:', url);
+
+    // Redirect the browser to the generated dynamic filter URL
+    window.location.href = url;
+  });
+}
 
 
 

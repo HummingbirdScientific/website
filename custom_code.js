@@ -463,7 +463,7 @@ function initDynamicFormSubmissionMessages() {
     '#wf-form-Custom-Solutions', '#wf-form-Quote', '#wf-form-Custom-Chips',
     '#wf-form-Product-Quote', '#wf-form-Service-Request-Form',
     '#wf-form-Training-Form', '#wf-form-Distributor-Application', '#wf-form-Contact-Form', 
-    '#wf-form-Submit-Publication-Form','#wf-form-Workshops-Form'
+    '#wf-form-Submit-Publication-Form','#wf-form-Workshops-Form', '#wf-form-Workshops-Form',
   ];
 
   targetFormIDs.forEach(selector => {
@@ -484,3 +484,547 @@ function initDynamicFormSubmissionMessages() {
   });
 }
 
+// Code to select weeks for the training form
+function initWeekPicker() {
+  const weekPicker = document.getElementById("week-picker");
+  if (!weekPicker || typeof flatpickr === "undefined") return;
+
+  // Store selected weeks
+  const selectedWeeks = [];
+
+  // Get today's date and current year
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const currentYear = today.getFullYear();
+
+  // Initialize Flatpickr
+  flatpickr(weekPicker, {
+    dateFormat: "Y-m-d",
+    closeOnSelect: false,
+    clickOpens: true,
+    allowInput: false,
+
+    minDate: today,
+    maxDate: `${currentYear}-12-31`,
+
+    disable: [
+      date => date.getDay() === 0 || date.getDay() === 6
+    ],
+
+    onReady: (_, __, instance) => setup(instance),
+    onMonthChange: (_, __, instance) => setup(instance)
+  });
+
+  function setup(instance) {
+    const container = instance.calendarContainer;
+    if (!container) return;
+
+    // Prevent duplicate listeners
+    if (container.dataset.bound) return;
+    container.dataset.bound = "true";
+
+    // Hover
+    container.addEventListener("mouseover", e => {
+      const dayEl = e.target.closest(".flatpickr-day");
+      if (!dayEl || !dayEl.dateObj) return;
+
+      const range = getWeekRange(dayEl.dateObj);
+      if (!range) return;
+
+      clearHover(container);
+
+      const { monday, friday } = range;
+
+      container.querySelectorAll(".flatpickr-day").forEach(el => {
+        if (!el.dateObj) return;
+
+        const d = el.dateObj;
+
+        if (d >= monday && d <= friday) {
+          el.classList.add("week-hover");
+        }
+
+        if (sameDay(d, monday)) el.classList.add("week-hover-start");
+        if (sameDay(d, friday)) el.classList.add("week-hover-end");
+      });
+    });
+
+    container.addEventListener("mouseleave", () => {
+      clearHover(container);
+    });
+
+    // Click
+    container.addEventListener("mousedown", e => {
+      const dayEl = e.target.closest(".flatpickr-day");
+      if (!dayEl || !dayEl.dateObj) return;
+
+      e.preventDefault();
+
+      const range = getWeekRange(dayEl.dateObj);
+      if (!range) return;
+
+      const { monday, friday } = range;
+      const value = formatRange(monday, friday);
+
+      if (!selectedWeeks.includes(value)) {
+        selectedWeeks.push(value);
+        renderWeeks();
+      }
+    });
+  }
+
+  function getWeekRange(date) {
+    const day = date.getDay();
+    const diff = (day === 0 ? -6 : 1) - day;
+
+    const monday = new Date(date);
+    monday.setDate(date.getDate() + diff);
+
+    const friday = new Date(monday);
+    friday.setDate(monday.getDate() + 4);
+
+    if (friday < today) return null;
+
+    return { monday, friday };
+  }
+
+  function formatRange(monday, friday) {
+    const sameMonth = monday.getMonth() === friday.getMonth();
+
+    const start = monday.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric"
+    });
+
+    const end = friday.toLocaleDateString("en-US", {
+      ...(sameMonth ? {} : { month: "short" }),
+      day: "numeric"
+    });
+
+    return `${start} – ${end}`;
+  }
+
+  function sameDay(a, b) {
+    return a.toDateString() === b.toDateString();
+  }
+
+  function clearHover(container) {
+    container.querySelectorAll(".flatpickr-day").forEach(el => {
+      el.classList.remove(
+        "week-hover",
+        "week-hover-start",
+        "week-hover-end"
+      );
+    });
+  }
+
+  function renderWeeks() {
+    const container = document.getElementById("selected-weeks");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    selectedWeeks.forEach((week, index) => {
+      const chip = document.createElement("div");
+      chip.className = "week-chip";
+
+      const text = document.createElement("span");
+      text.textContent = week;
+
+      const remove = document.createElement("span");
+      remove.className = "chip-remove";
+      remove.textContent = "×";
+
+      remove.onclick = () => {
+        selectedWeeks.splice(index, 1);
+        renderWeeks();
+      };
+
+      chip.append(text, remove);
+      container.appendChild(chip);
+    });
+
+    const hidden = document.getElementById("selected-weeks-input");
+    if (hidden) {
+      hidden.value = selectedWeeks.join(", ");
+    }
+  }
+}
+
+
+function initSalesPartnersCountrySearch() {
+
+  const searchInput = document.getElementById("country-search");
+  const results = document.getElementById("country-results");
+
+  // Exit if this page doesn't contain the Sales Partners search
+  if (!searchInput || !results) return;
+
+  const countries = [
+
+/* AMERICAS */
+{name:"Antigua and Barbuda",continent:"Americas"},
+{name:"Argentina",continent:"Americas"},
+{name:"Bahamas",continent:"Americas"},
+{name:"Barbados",continent:"Americas"},
+{name:"Belize",continent:"Americas"},
+{name:"Bolivia",continent:"Americas"},
+{name:"Brasil",continent:"Americas"},
+{name:"Canada",continent:"Americas"},
+{name:"Chile",continent:"Americas"},
+{name:"Colombia",continent:"Americas"},
+{name:"Costa Rica",continent:"Americas"},
+{name:"Cuba",continent:"Americas"},
+{name:"Dominica",continent:"Americas"},
+{name:"Dominican Republic",continent:"Americas"},
+{name:"Ecuador",continent:"Americas"},
+{name:"El Salvador",continent:"Americas"},
+{name:"Grenada",continent:"Americas"},
+{name:"Guatemala",continent:"Americas"},
+{name:"Guyana",continent:"Americas"},
+{name:"Haiti",continent:"Americas"},
+{name:"Honduras",continent:"Americas"},
+{name:"Jamaica",continent:"Americas"},
+{name:"Mexico",continent:"Americas"},
+{name:"Nicaragua",continent:"Americas"},
+{name:"Panama",continent:"Americas"},
+{name:"Paraguay",continent:"Americas"},
+{name:"Peru",continent:"Americas"},
+{name:"Saint Kitts and Nevis",continent:"Americas"},
+{name:"Saint Lucia",continent:"Americas"},
+{name:"Saint Vincent and the Grenadines",continent:"Americas"},
+{name:"Suriname",continent:"Americas"},
+{name:"Trinidad and Tobago",continent:"Americas"},
+{name:"United States",continent:"Americas"},
+{name:"USA",continent:"Americas"},
+{name:"Uruguay",continent:"Americas"},
+{name:"Venezuela",continent:"Americas"},
+
+/* EUROPE */
+{name:"Albania",continent:"Europe"},
+{name:"Andorra",continent:"Europe"},
+{name:"Austria",continent:"Europe"},
+{name:"Belarus",continent:"Europe"},
+{name:"Belgium",continent:"Europe"},
+{name:"Bosnia and Herzegovina",continent:"Europe"},
+{name:"Bulgaria",continent:"Europe"},
+{name:"Croatia",continent:"Europe"},
+{name:"Cyprus",continent:"Europe"},
+{name:"Czech Republic",continent:"Europe"},
+{name:"Denmark",continent:"Europe"},
+{name:"Estonia",continent:"Europe"},
+{name:"Finland",continent:"Europe"},
+{name:"France",continent:"Europe"},
+{name:"Germany",continent:"Europe"},
+{name:"Greece",continent:"Europe"},
+{name:"Hungary",continent:"Europe"},
+{name:"Iceland",continent:"Europe"},
+{name:"Ireland",continent:"Europe"},
+{name:"Italy",continent:"Europe"},
+{name:"Latvia",continent:"Europe"},
+{name:"Liechtenstein",continent:"Europe"},
+{name:"Lithuania",continent:"Europe"},
+{name:"Luxembourg",continent:"Europe"},
+{name:"Malta",continent:"Europe"},
+{name:"Moldova",continent:"Europe"},
+{name:"Monaco",continent:"Europe"},
+{name:"Montenegro",continent:"Europe"},
+{name:"The Netherlands",continent:"Europe"},
+{name:"North Macedonia",continent:"Europe"},
+{name:"Norway",continent:"Europe"},
+{name:"Poland",continent:"Europe"},
+{name:"Portugal",continent:"Europe"},
+{name:"Romania",continent:"Europe"},
+{name:"San Marino",continent:"Europe"},
+{name:"Serbia",continent:"Europe"},
+{name:"Slovakia",continent:"Europe"},
+{name:"Slovenia",continent:"Europe"},
+{name:"Spain",continent:"Europe"},
+{name:"Sweden",continent:"Europe"},
+{name:"Switzerland",continent:"Europe"},
+{name:"Ukraine",continent:"Europe"},
+{name:"United Kingdom",continent:"Europe"},
+{name:"Vatican City",continent:"Europe"},
+
+/* ASIA */
+{name:"China",continent:"Asia"},
+{name:"Japan",continent:"Asia"},
+{name:"South Korea",continent:"Asia"},
+
+
+
+/* SOUTHEAST ASIA/AUSTRALIA */
+{name:"Kazakhstan",continent:"Southeast Asia/Australia"},
+{name:"Kyrgyzstan",continent:"Southeast Asia/Australia"},
+{name:"Mongolia",continent:"Southeast Asia/Australia"},
+{name:"North Korea",continent:"Southeast Asia/Australia"},
+{name:"Taiwan",continent:"Southeast Asia/Australia"},
+{name:"Tajikistan",continent:"Southeast Asia/Australia"},
+{name:"Turkmenistan",continent:"Southeast Asia/Australia"},
+{name:"Uzbekistan",continent:"Southeast Asia/Australia"},
+  
+{name:"Afghanistan",continent:"Southeast Asia/Australia"},
+{name:"Australia",continent:"Southeast Asia/Australia"},
+{name:"Bangladesh",continent:"Southeast Asia/Australia"},
+{name:"Bhutan",continent:"Southeast Asia/Australia"},
+{name:"Brunei",continent:"Southeast Asia/Australia"},
+{name:"Cambodia",continent:"Southeast Asia/Australia"},
+{name:"Fiji",continent:"Southeast Asia/Australia"},
+{name:"India",continent:"Southeast Asia/Australia"},
+{name:"Indonesia",continent:"Southeast Asia/Australia"},
+{name:"Kiribati",continent:"Southeast Asia/Australia"},
+{name:"Laos",continent:"Southeast Asia/Australia"},
+{name:"Malaysia",continent:"Southeast Asia/Australia"},
+{name:"Maldives",continent:"Southeast Asia/Australia"},
+{name:"Marshall Islands",continent:"Southeast Asia/Australia"},
+{name:"Micronesia",continent:"Southeast Asia/Australia"},
+{name:"Myanmar",continent:"Southeast Asia/Australia"},
+{name:"Nauru",continent:"Southeast Asia/Australia"},
+{name:"Nepal",continent:"Southeast Asia/Australia"},
+{name:"New Zealand",continent:"Southeast Asia/Australia"},
+{name:"Pakistan",continent:"Southeast Asia/Australia"},
+{name:"Palau",continent:"Southeast Asia/Australia"},
+{name:"Papua New Guinea",continent:"Southeast Asia/Australia"},
+{name:"Philippines",continent:"Southeast Asia/Australia"},
+{name:"Samoa",continent:"Southeast Asia/Australia"},
+{name:"Singapore",continent:"Southeast Asia/Australia"},
+{name:"Solomon Islands",continent:"Southeast Asia/Australia"},
+{name:"Sri Lanka",continent:"Southeast Asia/Australia"},
+{name:"Thailand",continent:"Southeast Asia/Australia"},
+{name:"Timor-Leste",continent:"Southeast Asia/Australia"},
+{name:"Tonga",continent:"Southeast Asia/Australia"},
+{name:"Tuvalu",continent:"Southeast Asia/Australia"},
+{name:"Vanuatu",continent:"Southeast Asia/Australia"},
+{name:"Vietnam",continent:"Southeast Asia/Australia"},
+
+/* AFRICA/MIDDLE EAST */
+{name:"Algeria",continent:"Africa/Middle East"},
+{name:"Angola",continent:"Africa/Middle East"},
+{name:"Armenia",continent:"Africa/Middle East"},
+{name:"Azerbaijan",continent:"Africa/Middle East"},
+{name:"Benin",continent:"Africa/Middle East"},
+{name:"Botswana",continent:"Africa/Middle East"},
+{name:"Burkina Faso",continent:"Africa/Middle East"},
+{name:"Burundi",continent:"Africa/Middle East"},
+{name:"Cabo Verde",continent:"Africa/Middle East"},
+{name:"Cameroon",continent:"Africa/Middle East"},
+{name:"Central African Republic",continent:"Africa/Middle East"},
+{name:"Chad",continent:"Africa/Middle East"},
+{name:"Comoros",continent:"Africa/Middle East"},
+{name:"Democratic Republic of the Congo",continent:"Africa/Middle East"},
+{name:"Djibouti",continent:"Africa/Middle East"},
+{name:"Egypt",continent:"Africa/Middle East"},
+{name:"Equatorial Guinea",continent:"Africa/Middle East"},
+{name:"Eritrea",continent:"Africa/Middle East"},
+{name:"Eswatini",continent:"Africa/Middle East"},
+{name:"Ethiopia",continent:"Africa/Middle East"},
+{name:"Gabon",continent:"Africa/Middle East"},
+{name:"Gambia",continent:"Africa/Middle East"},
+{name:"Georgia",continent:"Africa/Middle East"},
+{name:"Ghana",continent:"Africa/Middle East"},
+{name:"Guinea",continent:"Africa/Middle East"},
+{name:"Guinea-Bissau",continent:"Africa/Middle East"},
+{name:"Ivory Coast",continent:"Africa/Middle East"},
+{name:"Kenya",continent:"Africa/Middle East"},
+{name:"Lesotho",continent:"Africa/Middle East"},
+{name:"Liberia",continent:"Africa/Middle East"},
+{name:"Libya",continent:"Africa/Middle East"},
+{name:"Madagascar",continent:"Africa/Middle East"},
+{name:"Malawi",continent:"Africa/Middle East"},
+{name:"Mali",continent:"Africa/Middle East"},
+{name:"Mauritania",continent:"Africa/Middle East"},
+{name:"Mauritius",continent:"Africa/Middle East"},
+{name:"Morocco",continent:"Africa/Middle East"},
+{name:"Mozambique",continent:"Africa/Middle East"},
+{name:"Namibia",continent:"Africa/Middle East"},
+{name:"Niger",continent:"Africa/Middle East"},
+{name:"Nigeria",continent:"Africa/Middle East"},
+{name:"Palestine",continent:"Africa/Middle East"},
+{name:"Republic of the Congo",continent:"Africa/Middle East"},
+{name:"Rwanda",continent:"Africa/Middle East"},
+{name:"Sao Tome and Principe",continent:"Africa/Middle East"},
+{name:"Senegal",continent:"Africa/Middle East"},
+{name:"Seychelles",continent:"Africa/Middle East"},
+{name:"Sierra Leone",continent:"Africa/Middle East"},
+{name:"Somalia",continent:"Africa/Middle East"},
+{name:"South Africa",continent:"Africa/Middle East"},
+{name:"South Sudan",continent:"Africa/Middle East"},
+{name:"Sudan",continent:"Africa/Middle East"},
+{name:"Tanzania",continent:"Africa/Middle East"},
+{name:"Togo",continent:"Africa/Middle East"},
+{name:"Tunisia",continent:"Africa/Middle East"},
+{name:"Turkey",continent:"Africa/Middle East"},
+{name:"Uganda",continent:"Africa/Middle East"},
+{name:"Zambia",continent:"Africa/Middle East"},
+{name:"Zimbabwe",continent:"Africa/Middle East"},
+{name:"Bahrain",continent:"Africa/Middle East"},
+{name:"Iran",continent:"Africa/Middle East"},
+{name:"Iraq",continent:"Africa/Middle East"},
+{name:"Israel",continent:"Africa/Middle East"},
+{name:"Jordan",continent:"Africa/Middle East"},
+{name:"Kuwait",continent:"Africa/Middle East"},
+{name:"Lebanon",continent:"Africa/Middle East"},
+{name:"Oman",continent:"Africa/Middle East"},
+{name:"Palestine",continent:"Africa/Middle East"},
+{name:"Qatar",continent:"Africa/Middle East"},
+{name:"Saudi Arabia",continent:"Africa/Middle East"},
+{name:"Syria",continent:"Africa/Middle East"},
+{name:"Turkey",continent:"Africa/Middle East"},
+{name:"United Arab Emirates",continent:"Africa/Middle East"},
+{name:"Yemen",continent:"Africa/Middle East"},
+
+
+  ];
+
+  const countriesWithHQ = {
+    "Americas": ["USA"],
+    "Europe": ["Netherlands"],
+    "Asia": ["JAPAN"],
+    "Southeast Asia/Australia": ["INDIA"],
+    "Africa/Middle East": ["INDIA"]
+  };
+
+  const continentSections = document.querySelectorAll(
+    "#sales-partners-table .sales_partners_table_content[data-continent]"
+  );
+
+  const dividers = document.querySelectorAll(
+    "#sales-partners-table .sales_partners_table_content.continent[data-continent]"
+  );
+
+  const cmsWraps = document.querySelectorAll(
+    "#sales-partners-table .sales-partners-cms-wrap[data-continent]"
+  );
+
+  const defaultShowAll = document.getElementById("default-show-all");
+
+  function filterContinent(selectedContinent) {
+
+    continentSections.forEach(section => {
+      section.style.display =
+        section.dataset.continent === selectedContinent ? "" : "none";
+    });
+
+    dividers.forEach(divider => {
+      divider.style.display =
+        divider.dataset.continent === selectedContinent ? "" : "none";
+    });
+
+    cmsWraps.forEach(cms => {
+
+      const show = cms.dataset.continent === selectedContinent;
+
+      cms.style.display = show ? "" : "none";
+
+      const dealer = cms.querySelector(".default-dealer");
+
+      if (dealer) {
+        dealer.style.display = show ? "grid" : "none";
+      }
+
+    });
+
+    if (defaultShowAll) {
+      defaultShowAll.style.display =
+        selectedContinent === "Americas" ? "none" : "";
+    }
+  }
+
+  function resetContinents() {
+
+    continentSections.forEach(section => {
+      section.style.display = "";
+    });
+
+    dividers.forEach(divider => {
+      divider.style.display = "";
+    });
+
+    cmsWraps.forEach(cms => {
+
+      cms.style.display = "";
+
+      const dealer = cms.querySelector(".default-dealer");
+
+      if (dealer) {
+        dealer.style.display = "none";
+      }
+
+    });
+
+  }
+
+  searchInput.addEventListener("input", () => {
+
+    const value = searchInput.value.trim().toLowerCase();
+
+    results.innerHTML = "";
+
+    if (!value) {
+
+      results.style.display = "none";
+
+      resetContinents();
+
+      if (searchInput.form) {
+        searchInput.form.requestSubmit();
+      }
+
+      return;
+    }
+
+    const matches = countries.filter(country =>
+      country.name.toLowerCase().includes(value)
+    );
+
+    matches.forEach(country => {
+
+      const item = document.createElement("div");
+
+      item.className = "country-option";
+      item.textContent = country.name;
+
+      item.addEventListener("click", () => {
+
+        searchInput.value = country.name;
+
+        results.style.display = "none";
+
+        filterContinent(country.continent);
+
+        const cms = [...cmsWraps].find(
+          wrap => wrap.dataset.continent === country.continent
+        );
+
+        if (cms) {
+
+          const defaultDealer = cms.querySelector(".default-dealer");
+
+          if (defaultDealer) {
+
+            const hqCountries = countriesWithHQ[country.continent] || [];
+
+            const hasHQ = hqCountries.some(
+              hq => hq.toLowerCase() === country.name.toLowerCase()
+            );
+
+            defaultDealer.style.display = hasHQ ? "none" : "grid";
+          }
+
+        }
+
+        if (searchInput.form) {
+          searchInput.form.requestSubmit();
+        }
+
+      });
+
+      results.appendChild(item);
+
+    });
+
+    results.style.display = matches.length ? "block" : "none";
+
+  });
+
+}

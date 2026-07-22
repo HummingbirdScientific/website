@@ -486,7 +486,7 @@ function initDynamicFormSubmissionMessages() {
 
 // Code to select weeks for the training form
 function initWeekPicker() {
-  const weekPicker = document.getElementById("week-picker");
+  const weekPicker = document.getElementById("ignore-date-selection");
   if (!weekPicker || typeof flatpickr === "undefined") return;
 
   // Store selected weeks

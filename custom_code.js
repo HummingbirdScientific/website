@@ -34,7 +34,7 @@ function addMobileNavBackdropToBody() {
 
   const backdropCopy = backdrop.cloneNode(true);
   backdropCopy.id = "mob-nav-backdrop-fixed";
-  backdropCopy.style.zIndex = "889";
+  // backdropCopy.style.zIndex = "889";
 
   document.body.appendChild(backdropCopy);
 

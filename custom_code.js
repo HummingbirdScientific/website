@@ -54,13 +54,13 @@ function addMobileNavBackdropToBody() {
     }
   });
   const mobileBurger = document.querySelector("#mobile-menu-burger-btn");
-  mobileBurger.addEventListner("click",() =>{
+  mobileBurger.addEventListener("click",() =>{
     if (backdrop.style.display === "none") {
       backdrop.style.display = "block";
     } else {
       backdrop.style.display = "none";
     }
-  }
+  });
 }
 
 function initMegaMenuNavigation() {

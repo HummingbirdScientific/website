@@ -1,7 +1,7 @@
 function addSearchBackdropToBody (){
   // code to move the searchbackdrop to the page body so that fixed positioning works 
   const backdrop = document.querySelector("#search-backdrop");
-
+  
   if (!backdrop) return;
 
   // Prevent duplicate copies
@@ -19,11 +19,30 @@ function addSearchBackdropToBody (){
     backdrop.style.display = "none";
 
     const resultsWrapper = document.querySelector("#results-wrapper");
-    const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");
-    
+        
     if (resultsWrapper) {
       resultsWrapper.style.display = "none";
     }
+    
+  });
+}
+function addMobileNavBackdropToBody() {
+  const backdrop = document.querySelector("#mob-nav-backdrop");
+  if (!backdrop) return;
+
+  if (document.querySelector("#mob-nav-backdrop-fixed")) return;
+
+  const backdropCopy = backdrop.cloneNode(true);
+  backdropCopy.id = "mob-nav-backdrop-fixed";
+  backdropCopy.style.zIndex = "889";
+
+  document.body.appendChild(backdropCopy);
+
+  backdropCopy.addEventListener("click", () => {
+    backdropCopy.style.display = "none";
+    backdrop.style.display = "none";
+
+    const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");
     if (mobileMenuWrapper) {
       mobileMenuWrapper.style.display = "none";
     }

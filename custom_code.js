@@ -35,7 +35,7 @@ function addMobileNavBackdropToBody() {
   const backdropCopy = backdrop.cloneNode(true);
   backdropCopy.id = "mob-nav-backdrop-fixed";
   // backdropCopy.style.zIndex = "889";
-
+  
   document.body.appendChild(backdropCopy);
 
   backdropCopy.addEventListener("click", () => {
@@ -48,9 +48,9 @@ function addMobileNavBackdropToBody() {
   
 
     const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");
-    if (mobileMenuWrapper) {
-      mobileMenuWrapper.style.display = "none";
-    }
+    // if (mobileMenuWrapper) {
+    //   mobileMenuWrapper.style.display = "none";
+    // }
   });
   // const mobileBurger = document.querySelector("#mobile-menu-burger-btn");
   // mobileBurger.addEventListener("click",() =>{

@@ -32,15 +32,20 @@ function addMobileNavBackdropToBody() {
 
   if (document.querySelector("#mob-nav-backdrop-fixed")) return;
 
-  const backdropCopy = backdrop.cloneNode(true);
-  backdropCopy.id = "mob-nav-backdrop-fixed";
-  // backdropCopy.style.zIndex = "889";
+  // const backdropCopy = backdrop.cloneNode(true);
+  // backdropCopy.id = "mob-nav-backdrop-fixed";
+  // // backdropCopy.style.zIndex = "889";
 
-  document.body.appendChild(backdropCopy);
+  // document.body.appendChild(backdropCopy);
 
-  backdropCopy.addEventListener("click", () => {
-    backdropCopy.style.display = "none";
-    backdrop.style.display = "none";
+  // backdropCopy.addEventListener("click", () => {
+  //   backdropCopy.style.display = "none";
+  //   backdrop.style.display = "none";
+  document.body.appendChild(backdrop);
+
+  backdrop.addEventListener("click", () => {
+  backdrop.style.display = "none";
+  
 
     const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");
     if (mobileMenuWrapper) {

@@ -41,11 +41,10 @@ function addMobileNavBackdropToBody() {
   backdropCopy.addEventListener("click", () => {
     backdropCopy.style.display = "none";
     backdrop.style.display = "none";
-  document.body.appendChild(backdrop);
-
-  backdropCopy.addEventListener("click", () => {
-  backdropCopy.style.display = "none";
-  backdrop.style.display = "none";
+  
+  // document.body.appendChild(backdrop);
+  // backdrop.addEventListener("click", () => {
+  // backdrop.style.display = "none";
   
 
     const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");

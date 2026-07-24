@@ -1,5 +1,5 @@
 function addSearchBackdropToBody (){
-  // code to move the searchbackdrop to the page bosy so that fixed positioning works 
+  // code to move the searchbackdrop to the page body so that fixed positioning works 
   const backdrop = document.querySelector("#search-backdrop");
 
   if (!backdrop) return;
@@ -19,9 +19,13 @@ function addSearchBackdropToBody (){
     backdrop.style.display = "none";
 
     const resultsWrapper = document.querySelector("#results-wrapper");
-
+    const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");
+    
     if (resultsWrapper) {
       resultsWrapper.style.display = "none";
+    }
+    if (mobileMenuWrapper) {
+      mobileMenuWrapper.style.display = "none";
     }
   });
 }

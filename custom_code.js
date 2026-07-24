@@ -45,6 +45,7 @@ function addMobileNavBackdropToBody() {
 
   backdrop.addEventListener("click", () => {
   backdrop.style.display = "none";
+  backdrop.style.zIndex = "889";
   
 
     const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");
@@ -52,6 +53,14 @@ function addMobileNavBackdropToBody() {
       mobileMenuWrapper.style.display = "none";
     }
   });
+  const mobileBurger = document.querySelector("#mobile-menu-burger-btn");
+  mobileBurger.addEventListner("click",() =>{
+    if (backdrop.style.display === "none") {
+      backdrop.style.display = "block";
+    } else {
+      backdrop.style.display = "none";
+    }
+  }
 }
 
 function initMegaMenuNavigation() {

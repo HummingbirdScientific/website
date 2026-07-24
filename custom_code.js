@@ -45,7 +45,7 @@ function addMobileNavBackdropToBody() {
 
   backdrop.addEventListener("click", () => {
   backdrop.style.display = "none";
-  backdrop.style.zIndex = "889";
+  backdrop.style.zIndex = "990";
   
 
     const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");

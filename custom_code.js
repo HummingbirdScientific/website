@@ -50,17 +50,19 @@ function addMobileNavBackdropToBody() {
     const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");
     if (mobileMenuWrapper) {
       mobileMenuWrapper.style.transform = "translateX(100%)";
-      mobileMenuWrapper.style.display = "none";
+      setTimeout(() => {
+        mobileMenuWrapper.style.display = "none";
+      }, 300);
     }
   });
-  const mobileBurger = document.querySelector("#mobile-menu-burger-btn");
-  mobileBurger.addEventListener("click",() =>{
-    if (backdrop.style.display === "none") {
-      backdrop.style.display = "block";
-    } else {
-      backdrop.style.display = "none";
-    }
-  });
+  // const mobileBurger = document.querySelector("#mobile-menu-burger-btn");
+  // mobileBurger.addEventListener("click",() =>{
+  //   if (backdrop.style.display === "none") {
+  //     backdrop.style.display = "block";
+  //   } else {
+  //     backdrop.style.display = "none";
+  //   }
+  // });
 }
 
 function initMegaMenuNavigation() {

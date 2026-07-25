@@ -31,16 +31,6 @@ function addMobileNavBackdropToBody() {
   if (!backdrop) return;
 
   if (document.querySelector("#mob-nav-backdrop-fixed")) return;
-
-  // const backdropCopy = backdrop.cloneNode(true);
-  // backdropCopy.id = "mob-nav-backdrop-fixed";
-  // // backdropCopy.style.zIndex = "889";
-  
-  // document.body.appendChild(backdropCopy);
-
-  // backdropCopy.addEventListener("click", () => {
-  //   backdropCopy.style.display = "none";
-  //   backdrop.style.display = "none";
   
   document.body.appendChild(backdrop);
   backdrop.addEventListener("click", () => {
@@ -50,20 +40,9 @@ function addMobileNavBackdropToBody() {
     const mobileMenuBtn = document.querySelector("#menu-burger-btn");
     if (mobileMenuBtn.style.display === "none") {
          mobileMenuBtn.style.display = "";
-  //     mobileMenuWrapper.style.transform = "translateX(100%)";
-  //     setTimeout(() => {
-  //       mobileMenuWrapper.style.display = "none";
-  //     }, 300);
     }
   });
-  // const mobileBurger = document.querySelector("#mobile-menu-burger-btn");
-  // mobileBurger.addEventListener("click",() =>{
-  //   if (backdrop.style.display === "none") {
-  //     backdrop.style.display = "block";
-  //   } else {
-  //     backdrop.style.display = "none";
-  //   }
-  // });
+
 }
 
 function initMegaMenuNavigation() {

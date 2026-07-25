@@ -43,18 +43,18 @@ function addMobileNavBackdropToBody() {
   //   backdrop.style.display = "none";
   
   document.body.appendChild(backdrop);
-  backdrop.addEventListener("click", () => {
-  backdrop.style.display = "none";
+  // backdrop.addEventListener("click", () => {
+  // backdrop.style.display = "none";
   
 
-    const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");
-    if (mobileMenuWrapper) {
-      mobileMenuWrapper.style.transform = "translateX(100%)";
-      setTimeout(() => {
-        mobileMenuWrapper.style.display = "none";
-      }, 300);
-    }
-  });
+  //   const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");
+  //   if (mobileMenuWrapper) {
+  //     mobileMenuWrapper.style.transform = "translateX(100%)";
+  //     setTimeout(() => {
+  //       mobileMenuWrapper.style.display = "none";
+  //     }, 300);
+  //   }
+  // });
   // const mobileBurger = document.querySelector("#mobile-menu-burger-btn");
   // mobileBurger.addEventListener("click",() =>{
   //   if (backdrop.style.display === "none") {

@@ -47,11 +47,11 @@ function addMobileNavBackdropToBody() {
   // backdrop.style.display = "none";
   
 
-    const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");
+    // const mobileMenuWrapper = document.querySelector("#mobile-nav-menu");
     // if (mobileMenuWrapper) {
     //   mobileMenuWrapper.style.display = "none";
     // }
-  });
+  // });
   const mobileBurger = document.querySelector("#mobile-menu-burger-btn");
   mobileBurger.addEventListener("click",() =>{
     if (backdrop.style.display === "none") {

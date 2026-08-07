@@ -482,7 +482,7 @@ function initDynamicFormSubmissionMessages() {
     '#wf-form-Custom-Solutions', '#wf-form-Quote', '#wf-form-Custom-Chips',
     '#wf-form-Product-Quote', '#wf-form-Service-Request-Form',
     '#wf-form-Training-Form', '#wf-form-Distributor-Application', '#wf-form-Contact-Form', 
-    '#wf-form-Submit-Publication-Form','#wf-form-Workshops-Form', '#wf-form-TEM-Stage-interest-Form', '#wf-form-Fast-freezing-interest-form'
+    '#wf-form-Submit-Publication-Form','#wf-form-Workshops-Form', '#wf-form-TEM-Stage-interest-Form', '#wf-form-Fast-freezing-interest-form', '#wf-form-Newsletter-Subscription-Form'
   ];
 
   targetFormIDs.forEach(selector => {

@@ -609,15 +609,18 @@ function initWeekPicker() {
 
   function formatRange(monday, friday) {
     const sameMonth = monday.getMonth() === friday.getMonth();
-
+    const sameYear = monday.getFullYear() === friday.getFullYear();
+    
     const start = monday.toLocaleDateString("en-US", {
       month: "short",
-      day: "numeric"
+      day: "numeric",
+      ...(sameYear ? {} : { year: "numeric" })
     });
 
     const end = friday.toLocaleDateString("en-US", {
       ...(sameMonth ? {} : { month: "short" }),
-      day: "numeric"
+      day: "numeric",
+      year: "numeric"
     });
 
     return `${start} – ${end}`;

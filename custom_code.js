@@ -624,7 +624,7 @@ function initWeekPicker() {
   
     const year = friday.getFullYear();
 
-    return `${start} – ${end}`;
+    return `${start} – ${end}, ${year}`;
   }
 
   function sameDay(a, b) {

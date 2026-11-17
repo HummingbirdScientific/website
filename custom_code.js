@@ -524,7 +524,7 @@ function initWeekPicker() {
     allowInput: false,
 
     minDate: today,
-    maxDate: `${currentYear}-12-31`,
+    maxDate: `${currentYear + 1}-12-31`,
 
     disable: [
       date => date.getDay() === 0 || date.getDay() === 6

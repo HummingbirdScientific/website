@@ -618,10 +618,11 @@ function initWeekPicker() {
     });
 
     const end = friday.toLocaleDateString("en-US", {
-      ...(sameMonth ? {} : { month: "short" }),
-      day: "numeric",
-      year: "numeric"
+      month: sameMonth ? undefined : "short",
+      day: "numeric"
     });
+  
+    const year = friday.getFullYear();
 
     return `${start} – ${end}`;
   }
